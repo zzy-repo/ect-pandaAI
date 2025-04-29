@@ -24,14 +24,14 @@ class QwenLLM(LLM):
 
 if __name__ == "__main__":
     try:
-        df = pd.read_csv('Procurement KPI Analysis Dataset.csv')
+        df = pd.read_csv('data/Procurement KPI Analysis Dataset.csv')
         smart_df = SmartDataframe(df, config={"llm": QwenLLM(), "verbose": False})
         manual_results = [
             df.groupby('Supplier').apply(lambda x: (x['Quantity'] * x['Unit_Price']).sum()).to_dict(), 
             df.groupby('Item_Category')['Unit_Price'].mean().to_dict(), 
             (df['Quantity'] * df['Unit_Price']).median()
         ]
-        with open('analysis_results.txt', 'w', encoding='utf-8') as f:
+        with open('output/analysis_results.txt', 'w', encoding='utf-8') as f:
             f.write("采购KPI分析结果汇总\n" + "=" * 50 + "\n\n")
             for section, qs in {
                 "三个最难的问题分析结果": [
@@ -50,6 +50,6 @@ if __name__ == "__main__":
                     (f"手动计算结果: {manual_results[i-1]}\n" if section == "三个最难的问题分析结果" and i <= 3 else "") + 
                     "\n" for i, q in enumerate(qs, 1)
                 ]))
-        print("分析结果已保存到 analysis_results.txt 文件中")
+        print("分析结果已保存到 output/analysis_results.txt 文件中")
     except Exception as e:
         print(f"程序执行过程中出现错误: {str(e)}") 
